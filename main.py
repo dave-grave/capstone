@@ -1,11 +1,11 @@
-# NOTE: make sure to pip install torch, torchvision, pygame, numpy, matplotlib, ipython
-
 import torch
 import random
 import numpy as np
 import pygame
 from collections import deque
 from game import SnakeGameAI, Direction, Point
+from model import Linear_QNet, QTrainer
+# from plot import plot
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -16,10 +16,10 @@ class Agent:
     def __init__(self):
         self.n_games = 0
         self.epsilon = 0 # randomness parameter
-        self.gamma = 0 # discount rate
+        self.gamma = 0.9 # discount rate (must be < 1)
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
-        self.model = None # TODO: add
-        self.trainer = None # TODO: add
+        self.model = Linear_QNet(11, 256, 3) # input_size must be 11 and output_size must be 3
+        self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
     def get_state(self, game):
         head = game.snake[0]
@@ -94,7 +94,7 @@ class Agent:
             final_move[move] = 1
         else: 
             state0 = torch.tensor(state, dtype=torch.float32)
-            prediction = self.model.predict(state0)
+            prediction = self.model(state0)
             move = torch.argmax(prediction).item()
             final_move[move] = 1
 
@@ -137,17 +137,22 @@ def train():
 
             if score > record:
                 record = score
-                # TODO: agent.model.save()
+                agent.model.save()
 
             print(f"Game: {agent.n_games}\nScore: {score}\nRecord: {record}")
 
-            # TODO: plot data
+            """plot_scores.append(score)
+            total_score += score
+            mean_score = total_score / agent.n_games
+            plot_mean_scores.append(mean_score)
+            plot(plot_scores, plot_mean_scores)"""
 
 if __name__ == '__main__':
     train()
 
-
-print(torch.__version__)
+"""print(torch.__version__)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
+print(device)"""
+
+
