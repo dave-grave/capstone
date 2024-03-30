@@ -140,10 +140,10 @@ class SnakeGameAI:
             new_dir = clock_wise[idx] # no change in direction
         elif np.array_equal(action, [0, 1, 0]):
             next_idx = (idx + 1) % 4
-            new_dir = clock_wise[idx] # right turn 
+            new_dir = clock_wise[next_idx] # right turn 
         else: # [0, 0, 1]
             next_idx = (idx - 1) % 4 
-            new_dir = clock_wise[idx] # left turn
+            new_dir = clock_wise[next_idx] # left turn
 
         self.direction = new_dir 
 

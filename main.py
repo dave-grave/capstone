@@ -85,13 +85,14 @@ class Agent:
     
     def get_action(self, state):
         # random moves: tradeoff exploration w/ exploitation in Deep Learning
-        self.epsilon = 80 - self.n_games # this number can be adjusted 
+        self.epsilon = 30 - self.n_games # this number can be adjusted 
         final_move = [0,0,0]
 
         # if epsilon is small enough (early in training), make a random move
         if random.randint(0, 200) < self.epsilon:
             move = random.randint(0, 2)
             final_move[move] = 1
+            
         else: 
             state0 = torch.tensor(state, dtype=torch.float32)
             prediction = self.model(state0)
@@ -146,6 +147,7 @@ def train():
             mean_score = total_score / agent.n_games
             plot_mean_scores.append(mean_score)
             plot(plot_scores, plot_mean_scores)"""
+
 
 if __name__ == '__main__':
     train()
