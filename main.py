@@ -85,7 +85,7 @@ class Agent:
     
     def get_action(self, state):
         # random moves: tradeoff exploration w/ exploitation in Deep Learning
-        self.epsilon = 30 - self.n_games # this number can be adjusted 
+        self.epsilon = 80 - self.n_games # this number can be adjusted 
         final_move = [0,0,0]
 
         # if epsilon is small enough (early in training), make a random move

@@ -1,3 +1,5 @@
+# TODO: fix plot if time allows at the end
+
 import matplotlib.pyplot as plt
 from IPython import display
 
