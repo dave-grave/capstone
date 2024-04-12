@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import os
 import numpy as np
 
+
 class Linear_QNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super().__init__()
@@ -24,6 +25,8 @@ class Linear_QNet(nn.Module):
 
         file_name = os.path.join(model_folder_path, file_name)
         torch.save(self.state_dict(), file_name)
+
+        # TODO: craete importing of model's state_dict so we don't have to restart every time
 
 
 class QTrainer:
@@ -57,7 +60,7 @@ class QTrainer:
             if not done[i]:
                 Q_new = reward[i] + self.gamma * torch.max(self.model(next_state[i]))
 
-            target[i][torch.argmax(action).item()] = Q_new
+            target[i][torch.argmax(action[i]).item()] = Q_new
 
         # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if not done
         # pred.clone()

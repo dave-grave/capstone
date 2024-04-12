@@ -50,7 +50,6 @@ class SnakeGameAI:
     def reset(self):
         # init game state
         self.direction = Direction.RIGHT
-        print(self.direction)
         self.head = Point(self.w/2, self.h/2)
         self.snake = [self.head, 
                       Point(self.head.x-BLOCK_SIZE, self.head.y),
@@ -93,7 +92,7 @@ class SnakeGameAI:
         # 4. place new food or just move
         if self.head == self.food:
             self.score += 1
-            reward = 50     # set reward to +10 
+            reward = 50     # set reward to +50 
             self._place_food()
         else:
             self.snake.pop()
