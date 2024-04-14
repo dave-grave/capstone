@@ -140,7 +140,7 @@ def train():
                 record = score
                 agent.model.save()
 
-            print(f"Game: {agent.n_games}\nScore: {score}\nRecord: {record}")
+            print(f"Game: {agent.n_games}\nScore: {score}\nRecord: {record}\n")
 
             """plot_scores.append(score)
             total_score += score
@@ -151,6 +151,7 @@ def train():
 
 if __name__ == '__main__':
     train()
+    
 
 """print(torch.__version__)
 
