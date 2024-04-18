@@ -10,11 +10,13 @@ from model import Linear_QNet, QTrainer
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
+f = open("misc\epoch.txt")  # use to read epoch #
+
 
 class Agent: 
 
     def __init__(self):
-        self.n_games = 0
+        self.epoch = int(f.read()) 
         self.epsilon = 0 # randomness parameter
         self.gamma = 0.9 # discount rate (must be < 1)
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
@@ -85,7 +87,13 @@ class Agent:
     
     def get_action(self, state):
         # random moves: tradeoff exploration w/ exploitation in Deep Learning
-        self.epsilon = 80 - self.n_games # this number can be adjusted 
+        if False:
+            loaded_model = Linear_QNet(11, 256, 3)
+            loaded_model.load_state_dict(f="models\checkpoint.pth")
+
+            # TODO
+
+        self.epsilon = 80 - self.epoch # this number can be adjusted 
         final_move = [0,0,0]
 
         # if epsilon is small enough (early in training), make a random move
@@ -133,14 +141,18 @@ def train():
         if done:
             # train long memory, plot results
             game.reset()
-            agent.n_games += 1
+            agent.epoch += 1
             agent.train_long_memory()
 
             if score > record:
                 record = score
                 agent.model.save()
 
-            print(f"Game: {agent.n_games}\nScore: {score}\nRecord: {record}\n")
+            print(f"Game: {agent.epoch}\nScore: {score}\nRecord: {record}\n")
+
+            with open("epoch.txt", "w") as f:
+                f.write(str(agent.epoch))
+                print(agent.epoch)
 
             """plot_scores.append(score)
             total_score += score
@@ -148,14 +160,8 @@ def train():
             plot_mean_scores.append(mean_score)
             plot(plot_scores, plot_mean_scores)"""
 
+            # TODO: fix plotting on plot.py
+
 
 if __name__ == '__main__':
     train()
-    
-
-"""print(torch.__version__)
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)"""
-
-

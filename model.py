@@ -4,7 +4,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 import os
 import numpy as np
-
+from pathlib import Path
 
 class Linear_QNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -17,16 +17,17 @@ class Linear_QNet(nn.Module):
         x = self.linear2(x)
         return x
     
-    def save(self, file_name='model.pth'):
-        model_folder_path = './model'
+    def save(self):
+        MODEL_PATH = Path("models")
+        MODEL_PATH.mkdir(parents=True, exist_ok=True)
 
-        if not os.path.exists(model_folder_path):
-            os.makedirs(model_folder_path)
+        MODEL_NAME = "checkpoint.pth"
+        MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
 
-        file_name = os.path.join(model_folder_path, file_name)
-        torch.save(self.state_dict(), file_name)
+        print(f"Saving model to: {MODEL_SAVE_PATH}")
+        torch.save(obj=self.state_dict(), f=MODEL_SAVE_PATH)
 
-        # TODO: craete importing of model's state_dict so we don't have to restart every time
+        # TODO: craete importing of model's state_dict as a checkpoint so we don't have to restart every time
 
 
 class QTrainer:

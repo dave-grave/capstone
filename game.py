@@ -2,13 +2,14 @@
 
 import pygame
 import random
+import numpy as np
 from enum import Enum
 from collections import namedtuple
-import numpy as np
+
 
 pygame.init()
-font = pygame.font.Font('arial.ttf', 25)
-# font = pygame.font.SysFont('arial', 25)
+# font = pygame.font.Font('misc\arial.ttf', 25)
+font = pygame.font.SysFont('arial', 25)
 
 # reset
 # reward for ai
@@ -107,9 +108,11 @@ class SnakeGameAI:
     def is_collision(self, pt=None):
         if pt is None:
             pt = self.head
+
         # hits boundary
         if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
             return True
+        
         # hits itself
         if pt in self.snake[1:]:
             return True
