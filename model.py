@@ -21,7 +21,11 @@ class Linear_QNet(nn.Module):
         MODEL_PATH = Path("models")
         MODEL_PATH.mkdir(parents=True, exist_ok=True)
 
-        MODEL_NAME = "checkpoint.pth"
+        with open("epoch.txt", "r") as f:
+            epoch = f.read()
+
+        MODEL_NAME = "model.pth" + epoch
+
         MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
 
         print(f"Saving model to: {MODEL_SAVE_PATH}")
@@ -29,8 +33,25 @@ class Linear_QNet(nn.Module):
 
         # TODO: craete importing of model's state_dict as a checkpoint so we don't have to restart every time
 
+    def load(self):
+        loaded_model = Linear_QNet()
 
-class QTrainer:
+        MODEL_PATH = Path("models")
+        MODEL_PATH.mkdir(parents=True, exist_ok=True)
+
+        with open("epoch.txt", "r") as f:
+            epoch = f.read()
+
+        MODEL_NAME = "model.pth" + epoch
+
+        MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
+
+        loaded_model.load_state_dict(torch.load(f=MODEL_SAVE_PATH))
+
+        return loaded_model
+
+
+class QTrainer: 
     def __init__(self, model, lr, gamma):
         self.lr = lr
         self.gamma = gamma

@@ -10,7 +10,7 @@ from model import Linear_QNet, QTrainer
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
-f = open("misc\epoch.txt")  # use to read epoch #
+f = open("epoch.txt")  # use to read epoch #
 
 
 class Agent: 
@@ -139,20 +139,21 @@ def train():
 
         # check if game over
         if done:
+            # get global number of plays
+            with open("epoch.txt", "w") as f:
+                f.write(str(agent.epoch))
+                
+            agent.epoch += 1
+
             # train long memory, plot results
             game.reset()
-            agent.epoch += 1
             agent.train_long_memory()
 
             if score > record:
                 record = score
                 agent.model.save()
 
-            print(f"Game: {agent.epoch}\nScore: {score}\nRecord: {record}\n")
-
-            with open("epoch.txt", "w") as f:
-                f.write(str(agent.epoch))
-                print(agent.epoch)
+            print(f"Game: {agent.epoch}\nScore: {score}\nRecord: {record}")
 
             """plot_scores.append(score)
             total_score += score
