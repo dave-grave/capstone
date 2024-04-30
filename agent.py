@@ -2,6 +2,7 @@ import torch
 import random
 import numpy as np
 import pygame
+from pathlib import Path
 from collections import deque
 from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
@@ -10,7 +11,12 @@ from model import Linear_QNet, QTrainer
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
-f = open("epoch.txt")  # use to read epoch #
+f = open("info.txt")  # use to read epoch #
+
+MODEL_PATH = Path("models")
+MODEL_PATH.mkdir(parents=True, exist_ok=True)
+MODEL_NAME = "model.pth" 
+MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
 
 
 class Agent: 
@@ -22,6 +28,11 @@ class Agent:
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
         self.model = Linear_QNet(11, 256, 3) # input_size must be 11 and output_size must be 3
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
+
+    def load_model(self):
+        if MODEL_SAVE_PATH.is_file():
+            print("Importing file from model.pth")
+            self.model = self.model.load() 
 
     def get_state(self, game):
         head = game.snake[0]
@@ -86,13 +97,7 @@ class Agent:
         self.trainer.train_step(state, action, reward, next_state, done)
     
     def get_action(self, state):
-        # random moves: tradeoff exploration w/ exploitation in Deep Learning
-        if False:
-            loaded_model = Linear_QNet(11, 256, 3)
-            loaded_model.load_state_dict(f="models\checkpoint.pth")
-
-            # TODO
-
+        # random moves: tradeoff exploration w/ exploitation in Deep Learninh
         self.epsilon = 80 - self.epoch # this number can be adjusted 
         final_move = [0,0,0]
 
@@ -115,8 +120,10 @@ def train():
     plot_mean_scores = []
     total_score = 0
     record = 0 
-    agent = Agent()
     game = SnakeGameAI()
+    agent = Agent()
+
+    agent.load_model()
 
     # training loop
     while True:
@@ -140,7 +147,7 @@ def train():
         # check if game over
         if done:
             # get global number of plays
-            with open("epoch.txt", "w") as f:
+            with open("info.txt", "w") as f:
                 f.write(str(agent.epoch))
                 
             agent.epoch += 1
