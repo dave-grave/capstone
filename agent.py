@@ -11,7 +11,7 @@ from model import Linear_QNet, QTrainer
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
-f = open("info.txt")  # use to read epoch #
+f = open("info.txt")  # use to read epoch number
 
 MODEL_PATH = Path("models")
 MODEL_PATH.mkdir(parents=True, exist_ok=True)
@@ -29,10 +29,33 @@ class Agent:
         self.model = Linear_QNet(11, 256, 3) # input_size must be 11 and output_size must be 3
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
-    def load_model(self):
-        if MODEL_SAVE_PATH.is_file():
-            print("Importing file from model.pth")
-            self.model = self.model.load() 
+    def save(self):
+        """MODEL_PATH = Path("models")
+        MODEL_PATH.mkdir(parents=True, exist_ok=True)
+        MODEL_NAME = "model.pth" 
+        MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
+
+        print(f"Saving model to: {MODEL_SAVE_PATH}")"""
+
+        checkpoint = {
+            "model_state": self.model.state_dict(),
+            "optim_state": self.trainer.optimizer.state_dict()
+        }
+
+        torch.save(checkpoint, 'checkpoint.pth')
+
+    def load(self):
+        loaded_checkpoint = torch.load('checkpoint.pth')
+
+        print(self.model, self.trainer.optimizer)
+
+        self.model = Linear_QNet(11, 256, 3)
+        self.trainer = QTrainer(self.model, lr=0, gamma=self.gamma)
+
+        self.model.load_state_dict(loaded_checkpoint["model_state"])
+        self.trainer.optimizer.load_state_dict(loaded_checkpoint["optim_state"])
+
+        print(self.model, self.trainer.optimizer)
 
     def get_state(self, game):
         head = game.snake[0]
@@ -120,10 +143,10 @@ def train():
     plot_mean_scores = []
     total_score = 0
     record = 0 
-    game = SnakeGameAI()
     agent = Agent()
+    game = SnakeGameAI()
 
-    agent.load_model()
+    agent.load()
 
     # training loop
     while True:
@@ -148,8 +171,7 @@ def train():
         if done:
             # get global number of plays
             with open("info.txt", "w") as f:
-                f.write(str(agent.epoch))
-                
+                f.write(str(agent.epoch))    
             agent.epoch += 1
 
             # train long memory, plot results
@@ -158,7 +180,7 @@ def train():
 
             if score > record:
                 record = score
-                agent.model.save()
+                agent.save()
 
             print(f"Game: {agent.epoch}\nScore: {score}\nRecord: {record}")
 

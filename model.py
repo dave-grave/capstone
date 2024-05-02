@@ -17,33 +17,6 @@ class Linear_QNet(nn.Module):
         x = self.linear2(x)
         return x
     
-    def save(self):
-        MODEL_PATH = Path("models")
-        MODEL_PATH.mkdir(parents=True, exist_ok=True)
-
-        MODEL_NAME = "model.pth" 
-
-        MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
-
-        print(f"Saving model to: {MODEL_SAVE_PATH}")
-        torch.save(obj=self.state_dict(), f=MODEL_SAVE_PATH)
-
-        # TODO: craete importing of model's state_dict as a checkpoint so we don't have to restart every time
-
-    def load(self):
-        loaded_model = Linear_QNet(11, 256, 3)
-
-        MODEL_PATH = Path("models")
-        MODEL_PATH.mkdir(parents=True, exist_ok=True)
-        
-        MODEL_NAME = "model.pth" 
-
-        MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
-
-        loaded_model.load_state_dict(torch.load(f=MODEL_SAVE_PATH))
-
-        return loaded_model
-
 
 class QTrainer: 
     def __init__(self, model, lr, gamma):
