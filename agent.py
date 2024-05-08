@@ -2,6 +2,7 @@ import torch
 import random
 import numpy as np
 import pygame
+import os.path 
 from pathlib import Path
 from collections import deque
 from game import SnakeGameAI, Direction, Point
@@ -26,36 +27,28 @@ class Agent:
         self.epsilon = 0 # randomness parameter
         self.gamma = 0.9 # discount rate (must be < 1)
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
-        self.model = Linear_QNet(11, 256, 3) # input_size must be 11 and output_size must be 3
-        self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
+            
+        if os.path.exists('checkpoint.pth'):
+            self.model = Linear_QNet(11, 256, 3)
+            self.trainer = QTrainer(self.model, lr=0, gamma=self.gamma)
+
+            checkpoint = torch.load('checkpoint.pth')
+            self.model.load_state_dict(checkpoint["model_state_dict"])
+            self.trainer.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+
+            self.model.eval()     
+
+        else:
+            self.model = Linear_QNet(11, 256, 3) # input_size must be 11 and output_size must be 3
+            self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
     def save(self):
-        """MODEL_PATH = Path("models")
-        MODEL_PATH.mkdir(parents=True, exist_ok=True)
-        MODEL_NAME = "model.pth" 
-        MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
-
-        print(f"Saving model to: {MODEL_SAVE_PATH}")"""
-
         checkpoint = {
-            "model_state": self.model.state_dict(),
-            "optim_state": self.trainer.optimizer.state_dict()
+            "model_state_dict": self.model.state_dict(),
+            "optimizer_state_dict": self.trainer.optimizer.state_dict()
         }
 
         torch.save(checkpoint, 'checkpoint.pth')
-
-    def load(self):
-        loaded_checkpoint = torch.load('checkpoint.pth')
-
-        print(self.model, self.trainer.optimizer)
-
-        self.model = Linear_QNet(11, 256, 3)
-        self.trainer = QTrainer(self.model, lr=0, gamma=self.gamma)
-
-        self.model.load_state_dict(loaded_checkpoint["model_state"])
-        self.trainer.optimizer.load_state_dict(loaded_checkpoint["optim_state"])
-
-        print(self.model, self.trainer.optimizer)
 
     def get_state(self, game):
         head = game.snake[0]
@@ -145,8 +138,6 @@ def train():
     record = 0 
     agent = Agent()
     game = SnakeGameAI()
-
-    agent.load()
 
     # training loop
     while True:

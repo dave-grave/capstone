@@ -20,10 +20,10 @@ Point = namedtuple('Point', ['x', 'y'])
 
 
 class Direction(Enum):
-    RIGHT = 1
-    DOWN = 2
-    LEFT = 3
-    UP = 4
+    RIGHT = 'D'
+    DOWN = 'S'
+    LEFT = 'A'
+    UP = 'W'
 
 
 class Game():
@@ -74,7 +74,7 @@ class Game():
                 pt = self.head
 
             # hits boundary
-            if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
+            if pt.x > 9 or pt.x < 0 or pt.y > 8 or pt.y < 0:
                 return True
             
             # hits itself
