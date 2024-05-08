@@ -68,7 +68,7 @@ class SnakeGameAI:
         if self.food in self.snake:
             self._place_food()
         
-    def play_step(self, action):
+    def play_step(self, action): # TODO: move this over to screen reader
         # 0. increment frame iteration for every step of play
         self.frame_iteration += 1  
 
