@@ -1,5 +1,9 @@
+from pyautogui import *
 import pyautogui
 import time
+import keyboard
+import random
+import win32api, win32con
 import numpy as np
 from enum import Enum
 from collections import namedtuple
@@ -13,6 +17,9 @@ plan for implementation of reader.py below:
 SLOW SPEED: idk ms per tile
 NORMAL SPEED: 135ms per tile
 FAST SPEED: 89.1ms per tile
+
+TILE SIZE: 58px per tile
+SCREEN: (670, 314) inclusive to (1249, 835) inclusive
 """
 
 SPEED = 0.0891
@@ -30,7 +37,8 @@ class Game():
     def __init__(self):
         # ubuntu shortcut to minimize tab
         # pyautogui.hotkey('win', 'h') 
-        
+    
+        self.screen = pyautogui.screenshot(region=(670,314,580,522))
         self.reset()
 
     def reset(self):
@@ -45,7 +53,7 @@ class Game():
         self.frame_iteration = 0 
 
         time.sleep(1)
-        pyautogui.click(876, 716)
+        pyautogui.click(876, 700) # TODO: substitute this w/ a screenshot that finds the "play" button
 
     def play_step(self, action):
         # 1. increment frames
@@ -115,7 +123,8 @@ class Game():
 
 if __name__ == "__main__":
     game = Game()
-    for i in range(10):
+    while keyboard.is_pressed('q') == False:
         Game.reset(game)
-        pyautogui.press('d')
-
+        print('game is running')
+        time.sleep(1)
+    print("forced quit.")
