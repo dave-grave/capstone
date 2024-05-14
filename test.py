@@ -1,6 +1,8 @@
 import pyautogui
 import time
 import keyboard
+from pynput.keyboard import Key, Controller
+import win32api, win32con
 
 # 58px per tile
 # 231, 71, 29 = RED
@@ -8,25 +10,43 @@ import keyboard
 # to (1249, 835) inclusive
 # region=(670,314,580,522)
 
-while keyboard.is_pressed('q') == False:
+FRAMERATE = 0.135
+frame_elapsed = 0
 
+def click(x, y):
+    win32api.SetCursorPos((x,y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,0,0)
+
+def press(key):
+    keyboard = Controller()
+    keyboard.press(key)
+    keyboard.release(key)
+
+while keyboard.is_pressed('q') == False:
+    time_start = time.perf_counter()
+
+    click(860, 650)
+    press('d')
     pic = pyautogui.screenshot(region=(670,314,580,522))
 
     width, height = pic.size
     x, y = 0, 0
 
     for i in range(0, 550, 58):
-        
         for j in range(0, 500, 58):
             y = y % 9 
             r,g,b = pic.getpixel((25+i, 25+j))
             if r == 231:
-                print(f"at {x,y} color is {r,g,b}")
-                
+                print(f"at {x,y} color is {r,g,b} at frame {frame_elapsed}")
             y += 1
         x += 1
 
+    time_stop = time.perf_counter()
+    frame_elapsed += 1
 
+    print(time_stop - time_start)
+    time.sleep(FRAMERATE - (time_stop-time_start))
 
 # check screen for apple
 """while True:
