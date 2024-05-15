@@ -14,10 +14,10 @@ BATCH_SIZE = 1000
 LR = 0.001
 f = open("info.txt")  # use to read epoch number
 
-MODEL_PATH = Path("models")
+"""MODEL_PATH = Path("models")
 MODEL_PATH.mkdir(parents=True, exist_ok=True)
 MODEL_NAME = "model.pth" 
-MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
+MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME"""
 
 
 class Agent: 

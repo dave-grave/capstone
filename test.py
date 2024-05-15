@@ -1,5 +1,5 @@
 import pyautogui
-import time
+import threading, time
 import keyboard
 from pynput.keyboard import Key, Controller
 import win32api, win32con
@@ -11,7 +11,6 @@ import win32api, win32con
 # region=(670,314,580,522)
 
 FRAMERATE = 0.135
-frame_elapsed = 0
 
 def click(x, y):
     win32api.SetCursorPos((x,y))
@@ -23,14 +22,13 @@ def press(key):
     keyboard.press(key)
     keyboard.release(key)
 
-while keyboard.is_pressed('q') == False:
-    time_start = time.perf_counter()
+def scan():
+    frame_elapsed = 0
 
-    click(860, 650)
-    press('d')
+    # click(860, 650)
+    # press('d')
+
     pic = pyautogui.screenshot(region=(670,314,580,522))
-
-    width, height = pic.size
     x, y = 0, 0
 
     for i in range(0, 550, 58):
@@ -38,16 +36,16 @@ while keyboard.is_pressed('q') == False:
             y = y % 9 
             r,g,b = pic.getpixel((25+i, 25+j))
             if r == 231:
-                print(f"at {x,y} color is {r,g,b} at frame {frame_elapsed}")
+                print(f"at {x,y} color is {r,g,b} at time {time.time()} and frame {frame_elapsed}")
             y += 1
         x += 1
 
-    time_stop = time.perf_counter()
     frame_elapsed += 1
 
-    print(time_stop - time_start)
-    time.sleep(FRAMERATE - (time_stop-time_start))
+    threading.Timer(5, scan).start()
 
+scan()
+    
 # check screen for apple
 """while True:
     if pyautogui.locateOnScreen(r"apple.png") != None:
