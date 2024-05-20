@@ -46,15 +46,15 @@ class QTrainer:
         target = pred.clone()
         for i in range(len(done)):
             Q_new = reward[i]
+
+            # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if not done
             if not done[i]:
                 Q_new = reward[i] + self.gamma * torch.max(self.model(next_state[i]))
 
             target[i][torch.argmax(action[i]).item()] = Q_new
-
-        # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if not done
-        # pred.clone()
-        # preds[argmax(action)] = Q_new
+        
         self.optimizer.zero_grad()
+
         loss = self.criterion(target, pred)
         loss.backward()
 
