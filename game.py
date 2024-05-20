@@ -1,5 +1,3 @@
-# copied from python_engineer's repo 
-
 import pygame
 import random
 import numpy as np
