@@ -7,7 +7,8 @@ from pathlib import Path
 from collections import deque
 from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
-# from plot import plot
+from plot import plot
+
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -113,7 +114,7 @@ class Agent:
         self.trainer.train_step(state, action, reward, next_state, done)
     
     def get_action(self, state):
-        # random moves: tradeoff exploration w/ exploitation in Deep Learninh
+        # random moves: tradeoff exploration w/ exploitation in Deep Learning
         self.epsilon = 80 - self.epoch # this number can be adjusted 
         final_move = [0,0,0]
 
@@ -175,13 +176,11 @@ def train():
 
             print(f"Game: {agent.epoch}\nScore: {score}\nRecord: {record}")
 
-            """plot_scores.append(score)
+            plot_scores.append(score)
             total_score += score
-            mean_score = total_score / agent.n_games
+            mean_score = total_score / agent.epoch
             plot_mean_scores.append(mean_score)
-            plot(plot_scores, plot_mean_scores)"""
-
-            # TODO: fix plotting on plot.py
+            plot(plot_scores, plot_mean_scores)
 
 
 if __name__ == '__main__':
